@@ -50,6 +50,7 @@ var app = {
 
 var itemList = [];
 var currentAnswer;
+var currentAnsArray = [];
 var currentItem;
 
 function loadJsonFile(filename) {
@@ -98,7 +99,10 @@ function generateChoiceAnswer(item) {
 
     // Handle events
     $("input[name='radio-choice']").change(function() {  
-        currentAnswer = $(this).val();                                        
+        currentAnswer = $(this).val();
+        if (currentItem.type == "itemgroup") {
+            getCurrentAnsArray(item.id, currentAnswer);
+        }                                        
     });
 }
 
@@ -127,6 +131,9 @@ function generateRangeAnswer(item) {
     $("input[name='slider']").change(function(){
         $(this).closest(".ui-slider").find(".ui-slider-handle").text($(this).val());
         currentAnswer = $(this).val();
+        if (currentItem.type == "itemgroup") {
+            getCurrentAnsArray(item.id, currentAnswer);
+        }
     }); 
 
     $("input[name='slider']").slider().slider("refresh");
@@ -162,7 +169,7 @@ function generateCheckAnswer(item) {
             var value = $(this).attr('value'); 
                 if($(this).is(':checked'))
                     return { 'value':value }; 
-            });  
+        });  
         
         currentAnswer = [];
 
@@ -170,32 +177,11 @@ function generateCheckAnswer(item) {
             currentAnswer.push(status[i].value);
         }
 
-    });
-}
+        if (currentItem.type == "itemgroup") {
+            getCurrentAnsArray(item.id, currentAnswer);
+        }
 
-function createQuestion(item) {
-    console.log(item);
-    $("#mainpage").find("div.content").empty();
-    clearAnswer();
-    switch (item.type) {
-        case "choice":
-            createChoiceQuestion(item);
-            break;
-        case "range":
-            createRangeQuestion(item);
-            break;
-        case "check":
-            createCheckQuestion(item);
-            break;
-        case "report":
-            createReportQuestion(item);
-            break;
-        case "itemgroup":
-            createGroupQuestion(item);
-            break;
-        default:
-            break;
-    }
+    });
 }
 
 function createChoiceQuestion(item) {
@@ -218,21 +204,82 @@ function createReportQuestion(item) {
 }
 
 function createGroupQuestion(item) {
+    // console.log(item.length);
+    if (item.length > 0) {
+        for (var i = 0; i < item.length; i++) {
+            createSingleQuestion(item[i]);
+        }
+    }
+}
 
+function createSingleQuestion(item) {
+    switch (item.type) {
+        case "choice":
+            createChoiceQuestion(item);
+            break;
+        case "range":
+            createRangeQuestion(item);
+            break;
+        case "check":
+            createCheckQuestion(item);
+            break;
+        case "report":
+            createReportQuestion(item);
+            break;
+        default:
+            break;
+    }
+}
+
+function createQuestion(item) {
+    // console.log(item);
+    $("#mainpage").find("div.content").empty();
+    clearAnswer();
+    if (item.type == "itemgroup") {
+        createGroupQuestion(item.items);
+    }
+    else {
+        createSingleQuestion(item);
+    }
+}
+
+function getCurrentAnsArray(id, ans) {   
+    var choiceAnsObj = new Object();
+    choiceAnsObj.id = id;
+    choiceAnsObj.ans = ans;
+    for (var i = 0; i < currentAnsArray.length; i++) {
+        if (currentAnsArray[i].id == choiceAnsObj.id) {
+            currentAnsArray[i] = choiceAnsObj;
+            return;
+        }
+    }
+    currentAnsArray.push(choiceAnsObj);
 }
 
 function submitBtnOnClick() {
-    if (!currentAnswer || currentAnswer.length == 0) {
-        showPopupWithString("Please select an answer first!");
+    // send result as JSON to server
+    var jsonObject = new Object();
+    jsonObject.id = currentItem.id;
+    console.log('Received ' + currentAnsArray.length);
+    if (currentItem.type == "itemgroup") {
+        if (!currentAnsArray || currentAnsArray.length != currentItem.items.length) {
+            showPopupWithString("Please select all answers!");
+            return;
+        }
+        else {
+            jsonObject.ans = currentAnsArray;            
+        }      
     }
     else {
-        // send result as JSON to server
-        console.log(currentAnswer);
-        var jsonObject = new Object();
-        jsonObject.id = currentItem.id;
-        jsonObject.ans = currentAnswer;
-        showPopupWithString(JSON.stringify(jsonObject));
+        if (!currentAnswer || currentAnswer.length == 0) {
+            showPopupWithString("Please select the answer first!");
+            return;
+        }
+        else {
+            jsonObject.ans = currentAnswer;
+        }        
     }
+    showPopupWithString(JSON.stringify(jsonObject));
 }
 
 function showPopupWithString(str) {
@@ -251,7 +298,7 @@ $(document).ready(function() {
 });
 
 $(document).on("pageinit","#mainpage", function() {
-    loadJsonFile("sample_check");
+    loadJsonFile("sample_itemgroup");
 });
 
 function init() {
