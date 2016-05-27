@@ -49,53 +49,20 @@ var app = {
 };
 
 var itemList = [];
-var currentIndex;
 var currentAnswer;
+var currentItem;
 
-function loadJsonFile() {
-    $.getJSON("resource/sample.json", function(data) {
+function loadJsonFile(filename) {
+    $.getJSON("resource/" + filename + ".json", function(data) {
         itemList = data.ruleset.items;
         if (itemList.length > 0) {
-            for (var i = 0; i < itemList.length; i++) {
-                createMenuList(i);
-            }
-            createMenuList_MainPage();
-            $("#menupage_listview").listview().listview("refresh");
-            $("#menupage_listview").children("li").bind("click", function(e) {
-                currentIndex = $(this).index();
-            });
+            currentItem = itemList[0];
+            createQuestion(currentItem);
         }
     });
 }
 
-function createMenuList(index) {
-    var liNode = document.createElement("li");
-    var aNode = document.createElement("a");
-    var page = "#" + itemList[index].type + "page";
-    aNode.setAttribute("href", page);
-    aNode.setAttribute("data-transition", "slidefade");
-    var text = document.createTextNode(itemList[index].type);
-    aNode.appendChild(text);
-    liNode.appendChild(aNode);
-    document.getElementById("menupage_listview").appendChild(liNode);
-}
-
-function createMenuList_MainPage() {
-    var liNode = document.createElement("li");
-    var aNode = document.createElement("a");
-    aNode.setAttribute("href", "#mainpage");
-    aNode.setAttribute("data-transition", "slidefade");
-    var text = document.createTextNode("MainPage");
-    aNode.appendChild(text);
-    liNode.appendChild(aNode);
-    document.getElementById("menupage_listview").appendChild(liNode);
-}
-
-function createChoiceList(item) {
-    $("#choicepage").find("div.content").empty();
-
-    clearAnswer();
-
+function generateQuestionBox(item) {
     // Create the question Div
     var qDiv = document.createElement("div");
     qDiv.setAttribute("class", "questionBox");
@@ -103,8 +70,10 @@ function createChoiceList(item) {
     var questionText = document.createTextNode(item.title);
     pNode.appendChild(questionText);
     qDiv.appendChild(pNode);
-    $("#choicepage").find("div.content").append(qDiv);
+    $("#mainpage").find("div.content").append(qDiv);
+}
 
+function generateChoiceAnswer(item) {
     // Create the choice text
     var cDiv = document.createElement("div");
     var fieldNode = document.createElement("fieldset");
@@ -124,31 +93,16 @@ function createChoiceList(item) {
         fieldNode.appendChild(labelNode);   
     }
     cDiv.appendChild(fieldNode);
-    $("#choicepage").find("div.content").append(cDiv);
-
-    $("#choicepage").find("div.content").find("fieldset").trigger('create'); 
+    $("#mainpage").find("div.content").append(cDiv);
+    $("#mainpage").find("div.content").find("fieldset").trigger('create');
 
     // Handle events
     $("input[name='radio-choice']").change(function() {  
         currentAnswer = $(this).val();                                        
     });
-
 }
 
-function createRangeSlider(item) {
-    $("#rangepage").find("div.content").empty();
-
-    clearAnswer();
-
-    // Create the question Div
-    var qDiv = document.createElement("div");
-    qDiv.setAttribute("class", "questionBox");
-    var pNode = document.createElement("p");
-    var questionText = document.createTextNode(item.title);
-    pNode.appendChild(questionText);
-    qDiv.appendChild(pNode);
-    $("#rangepage").find("div.content").append(qDiv);
-
+function generateRangeAnswer(item) {
     // Create the choice slider
     var cDiv = document.createElement("div");
     cDiv.setAttribute("class", "slider");
@@ -160,15 +114,16 @@ function createRangeSlider(item) {
     sliderNode.setAttribute("max", item.hi);
     sliderNode.setAttribute("step", "0.1");
     cDiv.appendChild(sliderNode);
-    $("#rangepage").find("div.content").append(cDiv);
+    $("#mainpage").find("div.content").append(cDiv);
 
-    $("#rangepage").find("div.content").trigger('create'); 
+    $("#mainpage").find("div.content").trigger('create'); 
 
     // Set up the slider
     $("input[name='slider']").slider().slider("option", "highlight", true);
     $("input[name='slider']").closest(".ui-slider").find(".ui-slider-handle").text($("input[name='slider']").val());
     currentAnswer = $("input[name='slider']").val();
 
+    // Handle events
     $("input[name='slider']").change(function(){
         $(this).closest(".ui-slider").find(".ui-slider-handle").text($(this).val());
         currentAnswer = $(this).val();
@@ -177,20 +132,7 @@ function createRangeSlider(item) {
     $("input[name='slider']").slider().slider("refresh");
 }
 
-function createCheckbox(item) {
-    $("#checkpage").find("div.content").empty();
-
-    clearAnswer();
-
-    // Create the question Div
-    var qDiv = document.createElement("div");
-    qDiv.setAttribute("class", "questionBox");
-    var pNode = document.createElement("p");
-    var questionText = document.createTextNode(item.title);
-    pNode.appendChild(questionText);
-    qDiv.appendChild(pNode);
-    $("#checkpage").find("div.content").append(qDiv);
-
+function generateCheckAnswer(item) {
     // Create the choice text
     var cDiv = document.createElement("div");
     var fieldNode = document.createElement("fieldset");
@@ -211,10 +153,10 @@ function createCheckbox(item) {
         fieldNode.appendChild(labelNode);   
     }
     cDiv.appendChild(fieldNode);
-    $("#checkpage").find("div.content").append(cDiv);
+    $("#mainpage").find("div.content").append(cDiv);
+    $("#mainpage").find("div.content").find("fieldset").trigger('create'); 
 
-    $("#checkpage").find("div.content").find("fieldset").trigger('create'); 
-
+    // Handle events
     $("input[name='checkbox']").change(function() {  
         var status = $("input[name='checkbox']").filter(".checkbox").map(function(){
             var value = $(this).attr('value'); 
@@ -231,12 +173,52 @@ function createCheckbox(item) {
     });
 }
 
-function createReport(item) {
+function createQuestion(item) {
+    console.log(item);
+    $("#mainpage").find("div.content").empty();
     clearAnswer();
+    switch (item.type) {
+        case "choice":
+            createChoiceQuestion(item);
+            break;
+        case "range":
+            createRangeQuestion(item);
+            break;
+        case "check":
+            createCheckQuestion(item);
+            break;
+        case "report":
+            createReportQuestion(item);
+            break;
+        case "itemgroup":
+            createGroupQuestion(item);
+            break;
+        default:
+            break;
+    }
 }
 
-function createMainpageItem(list) {
-    
+function createChoiceQuestion(item) {
+    generateQuestionBox(item);
+    generateChoiceAnswer(item);
+}
+
+function createRangeQuestion(item) {
+    generateQuestionBox(item);
+    generateRangeAnswer(item);
+}
+
+function createCheckQuestion(item) {
+    generateQuestionBox(item);
+    generateCheckAnswer(item);
+}
+
+function createReportQuestion(item) {
+    // Do Something
+}
+
+function createGroupQuestion(item) {
+
 }
 
 function submitBtnOnClick() {
@@ -247,7 +229,7 @@ function submitBtnOnClick() {
         // send result as JSON to server
         console.log(currentAnswer);
         var jsonObject = new Object();
-        jsonObject.id = itemList[currentIndex].id;
+        jsonObject.id = currentItem.id;
         jsonObject.ans = currentAnswer;
         showPopupWithString(JSON.stringify(jsonObject));
     }
@@ -268,42 +250,15 @@ $(document).ready(function() {
     init();
 });
 
-$(document).on("pagebeforeshow","#menupage", function() {
-
-});
-
-$(document).on("pagebeforeshow","#mainpage", function() {
-    createMainpageItem(itemList);
-});
-
-$(document).on("pagebeforeshow","#choicepage", function(event, data) {
-    createChoiceList(itemList[currentIndex]);
-});
-
-$(document).on("pagebeforeshow","#rangepage", function() {
-    createRangeSlider(itemList[currentIndex]);
-});
-
-$(document).on("pagebeforeshow","#checkpage", function() {
-    createCheckbox(itemList[currentIndex]);
-});
-
-$(document).on("pagebeforeshow","#reportpage", function() {
-    createReport(itemList[currentIndex]);
+$(document).on("pageinit","#mainpage", function() {
+    loadJsonFile("sample_check");
 });
 
 function init() {
-    loadJsonFile();
     
     $("#myPopup").enhanceWithin().popup({autoOpen:false});
 
     $(".submitBtn").on("click", function () {
-        if (itemList[currentIndex].type != "itemgroup") {
             submitBtnOnClick();
-        }
-        else {
-            submitBtnOnClickGroup();
-        }
-        
     });
 }

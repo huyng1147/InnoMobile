@@ -213,7 +213,6 @@ function createItemGroup(item) {
 
     ansObj.id = item.id;
 
-    // console.log(list);
 }
 
 function submitBtnOnClickGroup() {

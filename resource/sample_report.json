@@ -1,0 +1,15 @@
+{
+    "ruleset": {
+        "items": [
+            {"id":"thankyou",
+             "type":"report"
+            }
+        ],
+        "rules": [{"cond": {"op": "==", "operand": "cough", "target":"1"}, "goto":"coughproductive"},
+        {"cond": {"op": ">", "operand": "@user", "target":""}, "goto":"thankyou"},
+        {"cond":{"op": "and", "operand":[{"op": ">", "operand": "@user", "target":""}, {"op": "or", "operand":[{"op": ">", "operand": "@user", "target":""}, {"op": ">", "operand": "@user", "target":""}]}]}, "goto":""}
+        
+        ]
+    }
+
+}

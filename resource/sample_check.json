@@ -1,0 +1,18 @@
+{
+    "ruleset": {
+        "items": [
+            {"id":"symptoms",
+             "type":"check",
+             "title": "Check all the symptoms that you currently have",
+              "choices":[{"label":"", "display":"Cough"}, 
+              {"label":"", "display":"Stuffed nose"}, {"label":"", "display":"Running nose"}]
+            }
+        ],
+        "rules": [{"cond": {"op": "==", "operand": "cough", "target":"1"}, "goto":"coughproductive"},
+        {"cond": {"op": ">", "operand": "@user", "target":""}, "goto":"thankyou"},
+        {"cond":{"op": "and", "operand":[{"op": ">", "operand": "@user", "target":""}, {"op": "or", "operand":[{"op": ">", "operand": "@user", "target":""}, {"op": ">", "operand": "@user", "target":""}]}]}, "goto":""}
+        
+        ]
+    }
+
+}

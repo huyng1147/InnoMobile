@@ -1,0 +1,17 @@
+{
+    "ruleset": {
+        "items": [
+             {"id":"coughproductive",
+             "type":"choice",
+             "title": "Is your cough productive?",
+              "choices":[{"label":"1", "display":"Yes"}, {"label":"2", "display":"No"}]
+            }
+        ],
+        "rules": [{"cond": {"op": "==", "operand": "cough", "target":"1"}, "goto":"coughproductive"},
+        {"cond": {"op": ">", "operand": "@user", "target":""}, "goto":"thankyou"},
+        {"cond":{"op": "and", "operand":[{"op": ">", "operand": "@user", "target":""}, {"op": "or", "operand":[{"op": ">", "operand": "@user", "target":""}, {"op": ">", "operand": "@user", "target":""}]}]}, "goto":""}
+        
+        ]
+    }
+
+}
