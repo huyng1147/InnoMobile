@@ -1,0 +1,142 @@
+<!DOCTYPE html>
+<!--
+    Licensed to the Apache Software Foundation (ASF) under one
+    or more contributor license agreements.  See the NOTICE file
+    distributed with this work for additional information
+    regarding copyright ownership.  The ASF licenses this file
+    to you under the Apache License, Version 2.0 (the
+    "License"); you may not use this file except in compliance
+    with the License.  You may obtain a copy of the License at
+
+    http://www.apache.org/licenses/LICENSE-2.0
+
+    Unless required by applicable law or agreed to in writing,
+    software distributed under the License is distributed on an
+    "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+     KIND, either express or implied.  See the License for the
+    specific language governing permissions and limitations
+    under the License.
+-->
+<html>
+    <head>
+        <!--
+        Customize this policy to fit your own app's needs. For more guidance, see:
+            https://github.com/apache/cordova-plugin-whitelist/blob/master/README.md#content-security-policy
+        Some notes:
+            * gap: is required only on iOS (when using UIWebView) and is needed for JS->native communication
+            * https://ssl.gstatic.com is required only on Android and is needed for TalkBack to function properly
+            * Disables use of inline scripts in order to mitigate risk of XSS vulnerabilities. To change this:
+                * Enable inline JS: add 'unsafe-inline' to default-src
+        -->
+
+        <title>Medical System</title>
+
+        <meta http-equiv="Content-Security-Policy" content="default-src 'self' data: gap: https://ssl.gstatic.com 'unsafe-eval'; style-src 'self' 'unsafe-inline'; media-src *; img-src *">
+        <meta name="format-detection" content="telephone=no">
+        <meta name="msapplication-tap-highlight" content="no">
+        <meta name="viewport" content="user-scalable=no, initial-scale=1, maximum-scale=1, minimum-scale=1, width=device-width">
+
+        <link rel="stylesheet" type="text/css" href="css/index.css">
+        <link rel="stylesheet" type="text/css" href="css/jquery.mobile-1.4.5.min.css"/>
+
+        <script src="js/jquery-1.11.1.min.js"></script>
+        <script src="js/jquery.mobile-1.4.5.min.js"></script>
+
+        <script type="text/javascript" charset=utf-8 src="cordova.js"></script>
+        <script type="text/javascript" src="js/index.js"></script>
+        <script type="text/javascript" src="js/index2.js"></script>
+    </head>
+
+    <body>
+        <div data-role="page" id="menupage" class="menu">
+            <div data-role="header" class="pageheader">
+                <h1>Inno Application</h1>
+            </div>
+            <div data-role="content">
+                <ul data-role="listview" id="menupage_listview" data-inset="true">
+                    
+                </ul>
+            </div>
+        </div>
+
+
+        <div data-role="page" id="mainpage" class="main">
+            <div data-role="header" class="pageheader">
+                <h1>Questions</h1>
+            </div>
+            <div data-role="content">
+
+            </div>
+            <div data-role="footer" class="pagefooter" align="center" data-position="fixed">
+                <a href="#" data-role="button" id="submitBtn" class="submitBtn ui-btn ui-corner-all ui-shadow ui-btn-inline ui-btn-icon-right ui-icon-">Submit</a>
+            </div>          
+        </div>
+
+        <div data-role="page" id="choicepage" class="menu" >
+            <div data-role="header" class="pageheader" data-add-back-btn="true" data-position="fixed">
+                <h1>Choice</h1>
+            </div>
+            <div data-role="content" class="content">
+            
+            </div>
+            <div data-role="footer" class="pagefooter" align="center" data-position="fixed">
+                <a href="#" data-role="button" id="submitBtn" class="submitBtn ui-btn ui-corner-all ui-shadow ui-btn-inline ui-btn-icon-right ui-icon-">Submit</a>
+            </div>
+        </div>
+
+        <div data-role="page" id="rangepage" class="menu">
+            <div data-role="header" class="pageheader" data-add-back-btn="true" data-position="fixed">
+                <h1>Range</h1>
+            </div>
+            <div data-role="content" class="content">
+                
+            </div>
+            <div data-role="footer" class="pagefooter" align="center" data-position="fixed">
+                <a href="#" data-role="button" id="submitBtn" class="submitBtn ui-btn ui-corner-all ui-shadow ui-btn-inline ui-btn-icon-right ui-icon-">Submit</a>
+            </div>
+        </div>
+
+        <div data-role="page" id="checkpage" class="menu">
+            <div data-role="header" class="pageheader" data-add-back-btn="true">
+                <h1>Check</h1>
+            </div>
+            <div data-role="content" class="content">
+                
+            </div>
+            <div data-role="footer" class="pagefooter" align="center" data-position="fixed">
+                <a href="#" data-role="button" id="submitBtn" class="submitBtn ui-btn ui-corner-all ui-shadow ui-btn-inline ui-btn-icon-right ui-icon-">Submit</a>
+            </div>
+        </div>
+
+        <div data-role="page" id="reportpage" class="menu">
+            <div data-role="header" class="pageheader" data-add-back-btn="true">
+                <h1>Report</h1>
+            </div>
+            <div data-role="content" class="content">
+            
+            </div>
+            <div data-role="footer" class="pagefooter" align="center" data-position="fixed">
+                <a href="#" data-role="button" id="submitBtn" class="submitBtn ui-btn ui-corner-all ui-shadow ui-btn-inline ui-btn-icon-right ui-icon-">Submit</a>
+            </div>
+        </div>
+
+        <div data-role="page" id="itemgrouppage" class="menu">
+            <div data-role="header" class="pageheader" data-add-back-btn="true">
+                <h1>Group</h1>
+            </div>
+            <div data-role="content" class="content">
+            
+            </div>
+            <div data-role="footer" class="pagefooter" align="center" data-position="fixed">
+                <a href="#" data-role="button" id="submitBtn" class="submitBtn ui-btn ui-corner-all ui-shadow ui-btn-inline ui-btn-icon-right ui-icon-">Submit</a>
+            </div>
+        </div>
+
+        <!-- Popup Dialog -->
+        <div data-role="popup" id="myPopup" data-dismissible="false" data-theme="a" data-transition="pop" data-corners="true" >
+            <p style="text-align: center;font-size:18px;"></p>      
+            <a href="#" data-rel="back" data-role="button" style="height:15px;width:50px;margin-left:auto;margin-right:auto;">OK</a>
+        </div>
+
+    </body>
+</html>
