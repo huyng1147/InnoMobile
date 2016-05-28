@@ -68,14 +68,14 @@ function generateQuestionBox(item) {
     var qDiv = document.createElement("div");
     qDiv.setAttribute("class", "questionBox");
     var pNode = document.createElement("p");
-    var questionText = document.createTextNode(item.title);
-    pNode.appendChild(questionText);
+    pNode.innerText = item.title;
     qDiv.appendChild(pNode);
     $("#mainpage").find("div.content").append(qDiv);
 }
 
 function generateChoiceAnswer(item) {
     // Create the choice text
+    var fragment = document.createDocumentFragment();
     var cDiv = document.createElement("div");
     var fieldNode = document.createElement("fieldset");
     for (var i = 0; i < item.choices.length; i++) {
@@ -88,12 +88,12 @@ function generateChoiceAnswer(item) {
         inputNode.setAttribute("id", "radio" + i);
         var labelNode = document.createElement("label");
         labelNode.setAttribute("for", "radio" + i);
-        var textNode = document.createTextNode(item.choices[i].display);
-        labelNode.appendChild(textNode);
+        labelNode.innerText = item.choices[i].display;
         fieldNode.appendChild(inputNode);
-        fieldNode.appendChild(labelNode);   
+        fieldNode.appendChild(labelNode);
+        fragment.appendChild(fieldNode);   
     }
-    cDiv.appendChild(fieldNode);
+    cDiv.appendChild(fragment);
     $("#mainpage").find("div.content").append(cDiv);
     $("#mainpage").find("div.content").find("fieldset").trigger('create');
 
@@ -124,6 +124,10 @@ function generateRangeAnswer(item) {
 
     // Set up the slider
     $("input[name='slider']").slider().slider("option", "highlight", true);
+    $("input[name='slider']").slider().each(function() {
+        //Add the min and max label
+    });
+
     $("input[name='slider']").closest(".ui-slider").find(".ui-slider-handle").text($("input[name='slider']").val());
     currentAnswer = $("input[name='slider']").val();
 
@@ -141,6 +145,7 @@ function generateRangeAnswer(item) {
 
 function generateCheckAnswer(item) {
     // Create the choice text
+    var fragment = document.createDocumentFragment();
     var cDiv = document.createElement("div");
     var fieldNode = document.createElement("fieldset");
     for (var i = 0; i < item.choices.length; i++) {
@@ -154,12 +159,12 @@ function generateCheckAnswer(item) {
         inputNode.setAttribute("id", "checkbox" + i);
         var labelNode = document.createElement("label");
         labelNode.setAttribute("for", "checkbox" + i);
-        var textNode = document.createTextNode(item.choices[i].display);
-        labelNode.appendChild(textNode);
+        labelNode.innerText = item.choices[i].display;
         fieldNode.appendChild(inputNode);
-        fieldNode.appendChild(labelNode);   
+        fieldNode.appendChild(labelNode);
+        fragment.appendChild(fieldNode);   
     }
-    cDiv.appendChild(fieldNode);
+    cDiv.appendChild(fragment);
     $("#mainpage").find("div.content").append(cDiv);
     $("#mainpage").find("div.content").find("fieldset").trigger('create'); 
 

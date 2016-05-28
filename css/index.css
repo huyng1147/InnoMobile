@@ -135,6 +135,14 @@ div.slider input {
     display: none;
 }
 
+div.slider .ui-slider label {
+    position: absolute;
+    width: 20px;
+    margin-left: -10px;
+    text-align: center;
+    margin-top: 20px;
+}
+
 div.slider .ui-slider-track {
     margin-left: 10px;
 }
