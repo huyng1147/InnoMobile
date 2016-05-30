@@ -52,6 +52,7 @@ var itemList = [];
 var currentAnswer;
 var currentAnsArray = [];
 var currentItem;
+var groupIndex = 0;
 
 function loadJsonFile(filename) {
     $.getJSON("resource/" + filename + ".json", function(data) {
@@ -63,17 +64,17 @@ function loadJsonFile(filename) {
     });
 }
 
-function generateQuestionBox(item) {
+function generateQuestionBox(item, index) {
     // Create the question Div
     var qDiv = document.createElement("div");
     qDiv.setAttribute("class", "questionBox");
     var pNode = document.createElement("p");
-    pNode.innerText = item.title;
+    pNode.innerText = index + ") " + item.title;
     qDiv.appendChild(pNode);
     $("#mainpage").find("div.content").append(qDiv);
 }
 
-function generateChoiceAnswer(item) {
+function generateChoiceAnswer(item, index) {
     // Create the choice text
     var fragment = document.createDocumentFragment();
     var cDiv = document.createElement("div");
@@ -83,7 +84,7 @@ function generateChoiceAnswer(item) {
         fieldNode.setAttribute("class", "fieldset");
         var inputNode = document.createElement("input");
         inputNode.setAttribute("type", "radio");
-        inputNode.setAttribute("name", "radio-choice");      
+        inputNode.setAttribute("name", "radio-choice-" + index);      
         inputNode.setAttribute("value", item.choices[i].display);
         inputNode.setAttribute("id", "radio" + i);
         var labelNode = document.createElement("label");
@@ -98,7 +99,7 @@ function generateChoiceAnswer(item) {
     $("#mainpage").find("div.content").find("fieldset").trigger('create');
 
     // Handle events
-    $("input[name='radio-choice']").change(function() {  
+    $("input[name='radio-choice-" + index +"']").change(function() {  
         currentAnswer = $(this).val();
         if (currentItem.type == "itemgroup") {
             getCurrentAnsArray(item.id, currentAnswer);
@@ -106,14 +107,15 @@ function generateChoiceAnswer(item) {
     });
 }
 
-function generateRangeAnswer(item) {
+function generateRangeAnswer(item, index) {
     // Create the choice slider
     var cDiv = document.createElement("div");
     cDiv.setAttribute("class", "slider");
     var sliderNode = document.createElement("input");
     sliderNode.setAttribute("type", "range");
     sliderNode.setAttribute("name", "slider");
-    sliderNode.setAttribute("value", item.lo);
+    sliderNode.setAttribute("id", "slider-" + index);
+    sliderNode.setAttribute("value", (item.lo + item.hi)/2.0);
     sliderNode.setAttribute("min", item.lo);
     sliderNode.setAttribute("max", item.hi);
     sliderNode.setAttribute("step", "0.1");
@@ -123,16 +125,16 @@ function generateRangeAnswer(item) {
     $("#mainpage").find("div.content").trigger('create'); 
 
     // Set up the slider
-    $("input[name='slider']").slider().slider("option", "highlight", true);
-    $("input[name='slider']").slider().each(function() {
+    $("input[id='slider-" + index + "']").slider().slider("option", "highlight", true);
+    $("input[id='slider-" + index + "']").slider().each(function() {
         //Add the min and max label
     });
-
-    $("input[name='slider']").closest(".ui-slider").find(".ui-slider-handle").text($("input[name='slider']").val());
-    currentAnswer = $("input[name='slider']").val();
+   
+    $("input[id='slider-" + index + "']").closest(".ui-slider").find(".ui-slider-handle").text($("input[id='slider-" + index + "']").val());
+    currentAnswer = $("input[id='slider-" + index + "']").val();
 
     // Handle events
-    $("input[name='slider']").change(function(){
+    $("input[id='slider-" + index + "']").change(function(){
         $(this).closest(".ui-slider").find(".ui-slider-handle").text($(this).val());
         currentAnswer = $(this).val();
         if (currentItem.type == "itemgroup") {
@@ -143,7 +145,7 @@ function generateRangeAnswer(item) {
     $("input[name='slider']").slider().slider("refresh");
 }
 
-function generateCheckAnswer(item) {
+function generateCheckAnswer(item, index) {
     // Create the choice text
     var fragment = document.createDocumentFragment();
     var cDiv = document.createElement("div");
@@ -153,7 +155,7 @@ function generateCheckAnswer(item) {
         fieldNode.setAttribute("class", "fieldset");
         var inputNode = document.createElement("input");
         inputNode.setAttribute("type", "checkbox");
-        inputNode.setAttribute("name", "checkbox");  
+        inputNode.setAttribute("name", "checkbox-" + index);  
         inputNode.setAttribute("class", "checkbox");     
         inputNode.setAttribute("value", item.choices[i].display);
         inputNode.setAttribute("id", "checkbox" + i);
@@ -169,8 +171,8 @@ function generateCheckAnswer(item) {
     $("#mainpage").find("div.content").find("fieldset").trigger('create'); 
 
     // Handle events
-    $("input[name='checkbox']").change(function() {  
-        var status = $("input[name='checkbox']").filter(".checkbox").map(function(){
+    $("input[name='checkbox-" + index + "']").change(function() {  
+        var status = $("input[name='checkbox-" + index + "']").filter(".checkbox").map(function(){
             var value = $(this).attr('value'); 
                 if($(this).is(':checked'))
                     return { 'value':value }; 
@@ -189,19 +191,19 @@ function generateCheckAnswer(item) {
     });
 }
 
-function createChoiceQuestion(item) {
-    generateQuestionBox(item);
-    generateChoiceAnswer(item);
+function createChoiceQuestion(item, index) {
+    generateQuestionBox(item, index);
+    generateChoiceAnswer(item, index);
 }
 
-function createRangeQuestion(item) {
-    generateQuestionBox(item);
-    generateRangeAnswer(item);
+function createRangeQuestion(item, index) {
+    generateQuestionBox(item, index);
+    generateRangeAnswer(item, index);
 }
 
-function createCheckQuestion(item) {
-    generateQuestionBox(item);
-    generateCheckAnswer(item);
+function createCheckQuestion(item, index) {
+    generateQuestionBox(item, index);
+    generateCheckAnswer(item, index);
 }
 
 function createReportQuestion(item) {
@@ -212,24 +214,24 @@ function createGroupQuestion(item) {
     // console.log(item.length);
     if (item.length > 0) {
         for (var i = 0; i < item.length; i++) {
-            createSingleQuestion(item[i]);
+            createSingleQuestion(item[i], i+1);
         }
     }
 }
 
-function createSingleQuestion(item) {
+function createSingleQuestion(item, index) {
     switch (item.type) {
         case "choice":
-            createChoiceQuestion(item);
+            createChoiceQuestion(item, index);
             break;
         case "range":
-            createRangeQuestion(item);
+            createRangeQuestion(item, index);
             break;
         case "check":
-            createCheckQuestion(item);
+            createCheckQuestion(item, index);
             break;
         case "report":
-            createReportQuestion(item);
+            createReportQuestion(item, index);
             break;
         default:
             break;
@@ -244,7 +246,7 @@ function createQuestion(item) {
         createGroupQuestion(item.items);
     }
     else {
-        createSingleQuestion(item);
+        createSingleQuestion(item, 1);
     }
 }
 
@@ -303,7 +305,7 @@ $(document).ready(function() {
 });
 
 $(document).on("pageinit","#mainpage", function() {
-    loadJsonFile("sample_itemgroup");
+    loadJsonFile("sample_choice");
 });
 
 function init() {

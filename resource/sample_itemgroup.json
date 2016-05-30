@@ -20,6 +20,12 @@
                     "start":"true",
                     "title": "Do you have cough?",
                     "choices":[{"label":"1", "display":"Yes"}, {"label":"2", "display":"No"}]
+                },
+                {   "id":"fever1",
+                     "type":"range",
+                     "title": "What is weather temperature?",
+                     "lo" : 100.0,
+                     "hi" : 270.5
                 }
             ]}
         ],
