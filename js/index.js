@@ -336,7 +336,7 @@ $(document).on("pageinit","#mainpage", function() {
 });
 
 function init() {
-
+    //init
     mainPageSelector = $("#mainpage");
     popupSelector = $("#myPopup");
 
