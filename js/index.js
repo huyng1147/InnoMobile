@@ -52,7 +52,8 @@ var itemList = [];
 var currentAnswer;
 var currentAnsArray = [];
 var currentItem;
-var groupIndex = 0;
+var mainPageSelector;
+var popupSelector;
 
 function loadJsonFile(filename) {
     $.getJSON("resource/" + filename + ".json", function(data) {
@@ -71,7 +72,7 @@ function generateQuestionBox(item, index) {
     var pNode = document.createElement("p");
     pNode.innerText = index + ") " + item.title;
     qDiv.appendChild(pNode);
-    $("#mainpage").find("div.content").append(qDiv);
+    mainPageSelector.find("div.content").append(qDiv);
 }
 
 function generateChoiceAnswer(item, index) {
@@ -95,8 +96,8 @@ function generateChoiceAnswer(item, index) {
         fragment.appendChild(fieldNode);   
     }
     cDiv.appendChild(fragment);
-    $("#mainpage").find("div.content").append(cDiv);
-    $("#mainpage").find("div.content").find("fieldset").trigger('create');
+    mainPageSelector.find("div.content").append(cDiv);
+    mainPageSelector.find("div.content").find("fieldset").trigger('create');
 
     // Handle events
     $("input[name='radio-choice-" + index +"']").change(function() {  
@@ -120,9 +121,9 @@ function generateRangeAnswer(item, index) {
     sliderNode.setAttribute("max", item.hi);
     sliderNode.setAttribute("step", "0.1");
     cDiv.appendChild(sliderNode);
-    $("#mainpage").find("div.content").append(cDiv);
+    mainPageSelector.find("div.content").append(cDiv);
 
-    $("#mainpage").find("div.content").trigger('create'); 
+    mainPageSelector.find("div.content").trigger('create');
 
     // Set up the slider
     $("input[id='slider-" + index + "']").slider().slider("option", "highlight", true);
@@ -167,8 +168,8 @@ function generateCheckAnswer(item, index) {
         fragment.appendChild(fieldNode);   
     }
     cDiv.appendChild(fragment);
-    $("#mainpage").find("div.content").append(cDiv);
-    $("#mainpage").find("div.content").find("fieldset").trigger('create'); 
+    mainPageSelector.find("div.content").append(cDiv);
+    mainPageSelector.find("div.content").find("fieldset").trigger('create');
 
     // Handle events
     $("input[name='checkbox-" + index + "']").change(function() {  
@@ -240,7 +241,7 @@ function createSingleQuestion(item, index) {
 
 function createQuestion(item) {
     // console.log(item);
-    $("#mainpage").find("div.content").empty();
+    mainPageSelector.find("div.content").empty();
     clearAnswer();
     if (item.type == "itemgroup") {
         createGroupQuestion(item.items);
@@ -251,7 +252,7 @@ function createQuestion(item) {
 }
 
 function getCurrentAnsArray(id, ans) {   
-    var choiceAnsObj = new Object();
+    var choiceAnsObj = {};
     choiceAnsObj.id = id;
     choiceAnsObj.ans = ans;
     for (var i = 0; i < currentAnsArray.length; i++) {
@@ -265,7 +266,7 @@ function getCurrentAnsArray(id, ans) {
 
 function submitBtnOnClick() {
     // send result as JSON to server
-    var jsonObject = new Object();
+    var jsonObject = {};
     jsonObject.id = currentItem.id;
     console.log('Received ' + currentAnsArray.length);
     if (currentItem.type == "itemgroup") {
@@ -290,8 +291,8 @@ function submitBtnOnClick() {
 }
 
 function showPopupWithString(str) {
-    $("#myPopup").find("p").text(str);
-    $("#myPopup").enhanceWithin().popup("open");
+    popupSelector.find("p").text(str);
+    popupSelector.enhanceWithin().popup("open");
 }
 
 function clearAnswer() {
@@ -309,8 +310,11 @@ $(document).on("pageinit","#mainpage", function() {
 });
 
 function init() {
-    
-    $("#myPopup").enhanceWithin().popup({autoOpen:false});
+
+    mainPageSelector = $("#mainpage");
+    popupSelector = $("#myPopup");
+
+    popupSelector.enhanceWithin().popup({autoOpen:false});
 
     $(".submitBtn").on("click", function () {
             submitBtnOnClick();
