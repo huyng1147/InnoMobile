@@ -114,10 +114,23 @@ h1 {
     -webkit-animation:fade 3000ms infinite;
 }
 
+.question {
+    margin: 10px;
+    background-color: white;
+    border: 2px solid deepskyblue;
+    border-radius: 10px;
+    display: block;
+    overflow: auto;
+    word-wrap: break-word;
+    /*opacity: 0.6;*/
+    /*filter: alpha(opacity=60);*/
+}
+
 .questionBox {
     margin: 0px;
-    background-color: #ffffff;
-    border: 1px solid black;
+    background-color: white;
+    border: hidden;/*1px solid deepskyblue;*/
+    border-radius: 10px;
     display: block;
     overflow: auto;
     word-wrap: break-word;
@@ -129,6 +142,11 @@ h1 {
     margin: 15px;
     color: black;
     text-align: left;
+}
+
+.fieldset .ui-controlgroup-controls {
+    margin-left: 15px;
+    margin-right: 15px;
 }
 
 div.slider input {
@@ -154,3 +172,6 @@ div.slider .ui-slider-track .ui-slider-handle {
 div.slider .ui-slider-track .ui-slider-bg {
     background-color: #0DB8B5;
 }
+
+
+

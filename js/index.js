@@ -72,7 +72,7 @@ function generateQuestionBox(item, index) {
     var pNode = document.createElement("p");
     pNode.innerText = index + ") " + item.title;
     qDiv.appendChild(pNode);
-    mainPageSelector.find("div.content").append(qDiv);
+    $("#question" + index).append(qDiv);
 }
 
 function generateChoiceAnswer(item, index) {
@@ -95,8 +95,10 @@ function generateChoiceAnswer(item, index) {
         fieldNode.appendChild(labelNode);
         fragment.appendChild(fieldNode);   
     }
+    var brNode = document.createElement("br");
+    fragment.appendChild(brNode);
     cDiv.appendChild(fragment);
-    mainPageSelector.find("div.content").append(cDiv);
+    $("#question" + index).append(cDiv);
     mainPageSelector.find("div.content").find("fieldset").trigger('create');
 
     // Handle events
@@ -104,7 +106,7 @@ function generateChoiceAnswer(item, index) {
         currentAnswer = $(this).val();
         if (currentItem.type == "itemgroup") {
             getCurrentAnsArray(item.id, currentAnswer);
-        }                                        
+        }
     });
 }
 
@@ -121,7 +123,9 @@ function generateRangeAnswer(item, index) {
     sliderNode.setAttribute("max", item.hi);
     sliderNode.setAttribute("step", "0.1");
     cDiv.appendChild(sliderNode);
-    mainPageSelector.find("div.content").append(cDiv);
+    var brNode = document.createElement("br");
+    cDiv.appendChild(brNode);
+    $("#question" + index).append(cDiv);
 
     mainPageSelector.find("div.content").trigger('create');
 
@@ -167,8 +171,10 @@ function generateCheckAnswer(item, index) {
         fieldNode.appendChild(labelNode);
         fragment.appendChild(fieldNode);   
     }
+    var brNode = document.createElement("br");
+    fragment.appendChild(brNode);
     cDiv.appendChild(fragment);
-    mainPageSelector.find("div.content").append(cDiv);
+    $("#question" + index).append(cDiv);
     mainPageSelector.find("div.content").find("fieldset").trigger('create');
 
     // Handle events
@@ -193,16 +199,31 @@ function generateCheckAnswer(item, index) {
 }
 
 function createChoiceQuestion(item, index) {
+    var div = document.createElement("div");
+    div.setAttribute("class", "question");
+    div.setAttribute("id", "question" + index);
+    mainPageSelector.find("div.content").append(div);
+
     generateQuestionBox(item, index);
     generateChoiceAnswer(item, index);
 }
 
 function createRangeQuestion(item, index) {
+    var div = document.createElement("div");
+    div.setAttribute("class", "question");
+    div.setAttribute("id", "question" + index);
+    mainPageSelector.find("div.content").append(div)
+
     generateQuestionBox(item, index);
     generateRangeAnswer(item, index);
 }
 
 function createCheckQuestion(item, index) {
+    var div = document.createElement("div");
+    div.setAttribute("class", "question");
+    div.setAttribute("id", "question" + index);
+    mainPageSelector.find("div.content").append(div);
+
     generateQuestionBox(item, index);
     generateCheckAnswer(item, index);
 }
@@ -242,6 +263,9 @@ function createSingleQuestion(item, index) {
 function createQuestion(item) {
     // console.log(item);
     mainPageSelector.find("div.content").empty();
+    // var div = document.createElement("div");
+    // div.setAttribute("class", "question");
+    // mainPageSelector.find("div.content").append(div);
     clearAnswer();
     if (item.type == "itemgroup") {
         createGroupQuestion(item.items);
@@ -275,8 +299,8 @@ function submitBtnOnClick() {
             return;
         }
         else {
-            jsonObject.ans = currentAnsArray;            
-        }      
+            jsonObject.ans = currentAnsArray;
+        }
     }
     else {
         if (!currentAnswer || currentAnswer.length == 0) {
@@ -285,7 +309,7 @@ function submitBtnOnClick() {
         }
         else {
             jsonObject.ans = currentAnswer;
-        }        
+        }
     }
     showPopupWithString(JSON.stringify(jsonObject));
 }
@@ -306,7 +330,7 @@ $(document).ready(function() {
 });
 
 $(document).on("pageinit","#mainpage", function() {
-    loadJsonFile("sample_choice");
+    loadJsonFile("sample_itemgroup");
 });
 
 function init() {
