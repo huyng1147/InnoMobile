@@ -80,12 +80,13 @@ function generateChoiceAnswer(item, index) {
     var fragment = document.createDocumentFragment();
     var cDiv = document.createElement("div");
     var fieldNode = document.createElement("fieldset");
+    // fieldNode.setAttribute("data-type", "horizontal");
+    fieldNode.setAttribute("data-role", "controlgroup");
+    fieldNode.setAttribute("class", "fieldset");
     for (var i = 0; i < item.choices.length; i++) {
-        fieldNode.setAttribute("data-role", "controlgroup");
-        fieldNode.setAttribute("class", "fieldset");
         var inputNode = document.createElement("input");
         inputNode.setAttribute("type", "radio");
-        inputNode.setAttribute("name", "radio-choice-" + index);      
+        inputNode.setAttribute("name", "radio-choice-" + index);
         inputNode.setAttribute("value", item.choices[i].display);
         inputNode.setAttribute("id", "radio" + i);
         var labelNode = document.createElement("label");
@@ -93,7 +94,7 @@ function generateChoiceAnswer(item, index) {
         labelNode.innerText = item.choices[i].display;
         fieldNode.appendChild(inputNode);
         fieldNode.appendChild(labelNode);
-        fragment.appendChild(fieldNode);   
+        fragment.appendChild(fieldNode);
     }
     var brNode = document.createElement("br");
     fragment.appendChild(brNode);
@@ -102,7 +103,7 @@ function generateChoiceAnswer(item, index) {
     mainPageSelector.find("div.content").find("fieldset").trigger('create');
 
     // Handle events
-    $("input[name='radio-choice-" + index +"']").change(function() {  
+    $("input[name='radio-choice-" + index +"']").change(function() {
         currentAnswer = $(this).val();
         if (currentItem.type == "itemgroup") {
             getCurrentAnsArray(item.id, currentAnswer);
@@ -134,7 +135,7 @@ function generateRangeAnswer(item, index) {
     $("input[id='slider-" + index + "']").slider().each(function() {
         //Add the min and max label
     });
-   
+
     $("input[id='slider-" + index + "']").closest(".ui-slider").find(".ui-slider-handle").text($("input[id='slider-" + index + "']").val());
     currentAnswer = $("input[id='slider-" + index + "']").val();
 
@@ -145,7 +146,7 @@ function generateRangeAnswer(item, index) {
         if (currentItem.type == "itemgroup") {
             getCurrentAnsArray(item.id, currentAnswer);
         }
-    }); 
+    });
 
     $("input[name='slider']").slider().slider("refresh");
 }
@@ -155,13 +156,14 @@ function generateCheckAnswer(item, index) {
     var fragment = document.createDocumentFragment();
     var cDiv = document.createElement("div");
     var fieldNode = document.createElement("fieldset");
+    // fieldNode.setAttribute("data-type", "horizontal");
+    fieldNode.setAttribute("data-role", "controlgroup");
+    fieldNode.setAttribute("class", "fieldset");
     for (var i = 0; i < item.choices.length; i++) {
-        fieldNode.setAttribute("data-role", "controlgroup");
-        fieldNode.setAttribute("class", "fieldset");
         var inputNode = document.createElement("input");
         inputNode.setAttribute("type", "checkbox");
-        inputNode.setAttribute("name", "checkbox-" + index);  
-        inputNode.setAttribute("class", "checkbox");     
+        inputNode.setAttribute("name", "checkbox-" + index);
+        inputNode.setAttribute("class", "checkbox");
         inputNode.setAttribute("value", item.choices[i].display);
         inputNode.setAttribute("id", "checkbox" + i);
         var labelNode = document.createElement("label");
@@ -169,7 +171,7 @@ function generateCheckAnswer(item, index) {
         labelNode.innerText = item.choices[i].display;
         fieldNode.appendChild(inputNode);
         fieldNode.appendChild(labelNode);
-        fragment.appendChild(fieldNode);   
+        fragment.appendChild(fieldNode);
     }
     var brNode = document.createElement("br");
     fragment.appendChild(brNode);
@@ -178,13 +180,13 @@ function generateCheckAnswer(item, index) {
     mainPageSelector.find("div.content").find("fieldset").trigger('create');
 
     // Handle events
-    $("input[name='checkbox-" + index + "']").change(function() {  
+    $("input[name='checkbox-" + index + "']").change(function() {
         var status = $("input[name='checkbox-" + index + "']").filter(".checkbox").map(function(){
-            var value = $(this).attr('value'); 
-                if($(this).is(':checked'))
-                    return { 'value':value }; 
-        });  
-        
+            var value = $(this).attr('value');
+            if($(this).is(':checked'))
+                return { 'value':value };
+        });
+
         currentAnswer = [];
 
         for (var i = 0; i < status.length; i++) {
@@ -275,7 +277,7 @@ function createQuestion(item) {
     }
 }
 
-function getCurrentAnsArray(id, ans) {   
+function getCurrentAnsArray(id, ans) {
     var choiceAnsObj = {};
     choiceAnsObj.id = id;
     choiceAnsObj.ans = ans;
@@ -341,6 +343,6 @@ function init() {
     popupSelector.enhanceWithin().popup({autoOpen:false});
 
     $(".submitBtn").on("click", function () {
-            submitBtnOnClick();
+        submitBtnOnClick();
     });
 }
